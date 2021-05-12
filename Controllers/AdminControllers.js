@@ -140,7 +140,7 @@ const logoutAdmin = async (req, res) => {
     const options = {
         expires: new Date(0),
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: 'none'
     };
     res.cookie("token", "expiredtoken", options);
