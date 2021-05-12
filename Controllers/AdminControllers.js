@@ -50,7 +50,7 @@ const adminLogin = asyncHandler(async (req, res, next) => {
     const token = await admin.getToken()
 
     if (admin && (await admin.matchPassword(password))) {
-        res.cookie('token', token, { httpOnly: true, secure: false, maxAge: 3600000 })
+        res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 3600000 })
         res.json({
             message: "Admin logged in"
         })
@@ -149,8 +149,8 @@ const logoutAdmin = async (req, res) => {
 //   Check if admin is logged in
 const isLoggedIn = async (req, res) => {
     const token = req.cookies.token;
-    const error = new HttpError(token, 500);
-    return next(error);
+    // const error = new HttpError(token, 500);
+    // return next(error);
     try {
         if (!token) return res.json(false);
 
