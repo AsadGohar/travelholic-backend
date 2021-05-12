@@ -148,8 +148,10 @@ const logoutAdmin = async (req, res) => {
 
 //   Check if admin is logged in
 const isLoggedIn = async (req, res) => {
+    const token = req.cookies.token;
+    const error = new HttpError(token, 500);
+    return next(error);
     try {
-        const token = req.cookies.token;
         if (!token) return res.json(false);
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
