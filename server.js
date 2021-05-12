@@ -35,7 +35,10 @@ app.use(cors({
     origin: [
         "http://localhost:3000",
         "http://localhost:3001",
-      ],
+        "https://travelogic.pk",
+        "https://admin.travelogic.pk",
+
+    ],
     credentials: true,
 }));
 
@@ -49,8 +52,8 @@ app.use('/api/questions', QuestionRoutes)
 app.use('/api/trips', TripRoutes)
 app.use('/api/hotels', HotelRoutes)
 app.use('/api/upload', UploadRoutes)
-app.use('/api/plan',PlanATripRoutes)
-app.use('/api/feedbacks',FeedbackRoutes)
+app.use('/api/plan', PlanATripRoutes)
+app.use('/api/feedbacks', FeedbackRoutes)
 app.use('/api/tripplannerdestination', TripPlannerDestinationRoutes)
 
 // For admin
