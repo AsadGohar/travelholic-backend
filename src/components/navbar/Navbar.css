@@ -1,0 +1,14 @@
+.navbar{
+    background-color: #114B5F;
+    
+}
+#logout{
+    color: white;
+}
+#logout:hover{
+    color: rgb(148, 204, 212);
+}
+.logo-img{
+    width: 150px;
+    margin-left: 60px;
+}

@@ -1,0 +1,29 @@
+.shortcut-card{
+    padding: 22% 0% 22% 0%;
+    border-radius: 300px;
+    background-color: rgb(229, 230, 252);
+    margin-left: 3px;
+    margin-right: 3px;
+    margin-top: 50px;
+    color: rgb(34, 32, 32);
+}
+.shortcut-card:hover{
+    border: 1px solid rgb(209, 199, 199);
+    background-color: rgb(238, 238, 247);
+}
+.shortcut-link:hover{
+    text-decoration: none;
+}
+
+.my-card
+{
+    position:absolute;
+    left:37%;
+    top:-25px;
+    border-radius:100%;
+}
+
+.counter-card{
+    margin-bottom: 40px;
+    background-color: rgb(252, 247, 247);
+}
