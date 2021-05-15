@@ -42,7 +42,7 @@ const addImagetoTrip = async (req, res, next) => {
   req.file.filename = `trip-${name}-${Date.now()}.jpeg`;
   //  let file=req.file
   // console.log(file)
-  await sharp(req.file.path).resize({ width: 905, height: 905 }).toFile(`./uploads/trips/${req.file.filename}`)
+  await sharp(req.file.path).resize({ width: 800, height: 600 }).toFile(`./uploads/trips/${req.file.filename}`)
   try {
     trip = await TripModel.findById(id)
     tempPath = 'uploads\\trips\\' + trip.display_image
