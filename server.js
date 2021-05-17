@@ -40,6 +40,7 @@ app.use(cors({
     origin: [
         "https://admin.travelogic.pk",
         "http://localhost:3000",
+        "http://localhost:3001",
         "https://travelogic.pk",
 
     ],
