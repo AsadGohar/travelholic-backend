@@ -99,6 +99,44 @@ const createTrip = async (req, res, next) => {
   res.status(201).send(trip);
 }
 
+//UPDATE TRIP BY ID
+const updateTripById = async (req, res, next) => {
+
+  let id = req.params.id
+
+  const { title, price, description, attractions, excludes, service_provided, start_date, end_date, itinerary, company } = req.body
+
+  
+  let Trip;
+  try {
+      Trip = await TripModel.findById(id);
+  } catch (err) {
+      const error = new HttpError('Unknown error occured while updating Trip, please try again.',500);
+      return next(error);
+  }
+  trip.title = title
+  trip.price = price
+  trip.description = description
+  trip.rating = 0
+  trip.attractions = attractions
+  trip.excludes = excludes
+  trip.service_provided = service_provided
+  trip.display_image = 'default.jpg'
+  trip.start_date = start_date
+  trip.end_date = end_date
+  trip.itinerary = itinerary
+  trip.company = company
+  trip.numReviews = 0
+
+  try {
+    await trip.save()
+  } catch (err) {
+    const error = new HttpError('updating Trip failed, please try again', 500);
+    return next(error);
+  }
+  res.status(201).send(trip);
+}
+
 //GET ALL TRIPS
 const getTrips = async (req, res, next) => {
 
@@ -218,6 +256,7 @@ const createTripReview = async (req, res) => {
 
 //EXPORTING CONTROLLERS
 module.exports.createTrip = createTrip
+module.exports.updateTripById = updateTripById
 module.exports.getTrips = getTrips
 module.exports.getTripsAdmin = getTripsAdmin
 module.exports.getTripbyId = getTripbyId
