@@ -42,6 +42,7 @@ app.use(cors({
         "http://localhost:3000",
         "http://localhost:3001",
         "https://travelogic.pk",
+        "https://travelholic-n.herokuapp.com"
 
     ],
     credentials: true,
