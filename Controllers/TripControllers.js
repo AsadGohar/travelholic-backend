@@ -117,16 +117,13 @@ const updateTripById = async (req, res, next) => {
   trip.title = title
   trip.price = price
   trip.description = description
-  trip.rating = 0
   trip.attractions = attractions
   trip.excludes = excludes
   trip.service_provided = service_provided
-  trip.display_image = 'default.jpg'
   trip.start_date = start_date
   trip.end_date = end_date
   trip.itinerary = itinerary
   trip.company = company
-  trip.numReviews = 0
 
   try {
     await trip.save()
