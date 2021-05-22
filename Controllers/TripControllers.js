@@ -107,9 +107,9 @@ const updateTripById = async (req, res, next) => {
   const { title, price, description, attractions, excludes, service_provided, start_date, end_date, itinerary, company } = req.body
 
   
-  let Trip;
+  let trip;
   try {
-      Trip = await TripModel.findById(id);
+      trip = await TripModel.findById(id);
   } catch (err) {
       const error = new HttpError('Unknown error occured while updating Trip, please try again.',500);
       return next(error);
