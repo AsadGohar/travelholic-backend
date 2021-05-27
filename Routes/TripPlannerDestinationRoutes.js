@@ -6,7 +6,6 @@ const TripPlannerDestinationControllers = require('../Controllers/TripPlannerDes
 router.post('/', TripPlannerDestinationControllers.createTripPlannerDestination )
 router.get('/', TripPlannerDestinationControllers.getAllTripPlannerDestionations )
 router.get('/:id', TripPlannerDestinationControllers.getTripPlannerDestionationById )
-router.get('/coordinates/destinations', TripPlannerDestinationControllers.getTripPlannerDestionationByCoordinates )
 router.delete('/:id', TripPlannerDestinationControllers.deleteTripPlannerDestionationById )
 
 module.exports = router;
