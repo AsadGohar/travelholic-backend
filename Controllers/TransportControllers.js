@@ -155,6 +155,7 @@ const getTransportByDestinations = async (req, res, next) => {
 const addRoutetoTransport = async (req, res, next) => {
     
     const {route,id} = req.body
+    console.log(id)
     console.log(route.destination_to)
     console.log(route.destination_from)
     let transport;
