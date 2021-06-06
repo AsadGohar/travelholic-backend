@@ -6,7 +6,7 @@ const RouteControllers = require('../Controllers/RouteControllers')
 router.post('/', RouteControllers.createRoute)
 router.get('/', RouteControllers.getRoutes)
 router.get('/admin', RouteControllers.getRoutesAdmin)
-router.get('/route', RouteControllers.doesRouteExist)
+router.post('/route', RouteControllers.doesRouteExist)
 router.delete('/:id',RouteControllers.deleteRouteById)
 
 module.exports = router

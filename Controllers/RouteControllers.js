@@ -44,10 +44,10 @@ const doesRouteExist = async(req,res,next)=>{
   }
 
   if (route.length===0) {
-    res.send({exist:false}) 
+    res.send({status:'Sorry, Direct Route Does Not Exists'}) 
   }
   else{
-    res.send({exist:true})  
+    res.send({status:'Yay! This Route is Possible '})  
   }
   
 }

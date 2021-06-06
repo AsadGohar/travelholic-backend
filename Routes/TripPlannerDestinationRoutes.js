@@ -4,9 +4,9 @@ const router = express.Router();
 const TripPlannerDestinationControllers = require('../Controllers/TripPlannerDestinationController')
 
 router.post('/', TripPlannerDestinationControllers.createTripPlannerDestination )
-router.get('/', TripPlannerDestinationControllers.getAllTripPlannerDestionations )
+router.get('/', TripPlannerDestinationControllers.getAllTripPlannerDestinations )
 router.get('/:id', TripPlannerDestinationControllers.getTripPlannerDestionationById )
-router.get('/coordinates/destinations', TripPlannerDestinationControllers.getTripPlannerDestionationByCoordinates )
-router.delete('/:id', TripPlannerDestinationControllers.deleteTripPlannerDestionationById )
+router.post('/coordinates/destinations', TripPlannerDestinationControllers.getTripPlannerDestinationByCoordinates )
+router.delete('/:id', TripPlannerDestinationControllers.deleteTripPlannerDestinationById )
 
 module.exports = router;

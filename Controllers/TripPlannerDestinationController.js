@@ -24,7 +24,7 @@ const createTripPlannerDestination = async (req,res,next)=>{
   res.send(newDest)
 }
 
-const getAllTripPlannerDestionations = async (req,res,next)=>{
+const getAllTripPlannerDestinations = async (req,res,next)=>{
   let destinations
   try {
      destinations = await TripPlannerDestinationModel.find()
@@ -55,11 +55,20 @@ const getTripPlannerDestionationById = async (req,res,next)=>{
   res.send(destinations)
 }
 
-const getTripPlannerDestionationByCoordinates = async (req,res,next)=>{
+const getTripPlannerDestinationByCoordinates = async (req,res,next)=>{
   
   const {to,from} = req.body
+  console.log(to,from)
   try {
-     destinations = await TripPlannerDestinationModel.find({"north_coordinate":{$gte:from},"north_coordinate":{$lte:to}})
+    if (to>from){
+      // console.log('to>from')
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(from).lt(to).select('name').exec();
+    }
+    else {
+      // console.log('to<from')
+
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(to).lt(from).select('name').exec();
+    }
   } catch (error) {
     const err = new HttpError('Getting Trip Planner Destination Faile, please try again',500);
     return next(err);
@@ -71,7 +80,7 @@ const getTripPlannerDestionationByCoordinates = async (req,res,next)=>{
   res.send(destinations)
 }
 
-const deleteTripPlannerDestionationById = async (req,res,next)=>{
+const deleteTripPlannerDestinationById = async (req,res,next)=>{
   let destinations
   let id = req.params.id
   try {
@@ -89,8 +98,8 @@ const deleteTripPlannerDestionationById = async (req,res,next)=>{
 
 
 module.exports.createTripPlannerDestination = createTripPlannerDestination
-module.exports.getAllTripPlannerDestionations  = getAllTripPlannerDestionations
+module.exports.getAllTripPlannerDestinations  = getAllTripPlannerDestinations
 module.exports.getTripPlannerDestionationById  = getTripPlannerDestionationById
-module.exports.deleteTripPlannerDestionationById  = deleteTripPlannerDestionationById
-module.exports.getTripPlannerDestionationByCoordinates  = getTripPlannerDestionationByCoordinates
+module.exports.deleteTripPlannerDestinationById  = deleteTripPlannerDestinationById
+module.exports.getTripPlannerDestinationByCoordinates  = getTripPlannerDestinationByCoordinates
 
