@@ -36,6 +36,7 @@ exports.uploadTripPhoto = upload.single('photo')
 //Add dispalay image to trip
 const addImagetoTrip = async (req, res, next) => {
 
+  console.log('ere')
   const { id,name } = req.body
   let trip, tempPath
   // buffer = req.file.buffer

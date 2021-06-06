@@ -1,107 +1,61 @@
 const TripPlannerDestinationModel = require('../Models/TripPlannerDestination');
 const HotelModel = require('../Models/Hotel');
+const RouteModel = require('../Models/Route');
 const mongoose = require("mongoose");
 const TransportModel = require('../Models/Transport');
 const HttpError = require('../Models/HttpError');
 
 const getTripPlanEstimate = async (req,res,next)=>{
   const {destinations} =req.body
-  console.log('destinations',destinations)
-  //nextDest iterator variable
-  //minHotel for minimum hotel rent
-  //maxHotel for maximumhotel rent
-  //transport[] for inserting transport objects who have the route
-  //routesDetails[] for insering subarrays of objects {transport id,fares,to,from} 
-  //minTransportFare for storing minimum transport expenditure
-  //maxTransportFare for storing maximum transport expenditure
-  //totalFare to calculate total fare (old logic)
-  //routes[] for inserting routes info (old logic)
-  //fares[] for inserting fare values of routes (old logic)
-  //maxEstimate for sending estimated values from the controller  (old logic)
-  //minEstimate for sending estimated values from the controller (old logic)
+  // console.log('destinations',destinations)
+ 
+  let nextDest=1,minHotel=0,maxHotel=0,routes=[],fares=[],maxTransports=[],minTransports=[],minHotels=[],maxHotels=[],transports=[],totalFare=0,minEstimate,maxEstimate,routesDetails=[],minTransportFare=0,maxTransportFare=0,hotels=[],HotelDetails=[],maxHotelDetails=[],minHotelDetails=[],Hotels=[],Transports=[],luxury=[],budget=[]
 
-  //old logic used to calculate estimates by adding the top transport fare from each transport array
-  //new logic used to calculate estimates by adding minimum and maximum transport fare from each transport array
-
-  let nextDest=1,minHotel=0,maxHotel=0,routes=[],fares=[],transports=[],totalFare=0,minEstimate,maxEstimate,routesDetails=[],minTransportFare=0,maxTransportFare=0;
-
-  //checking if any transport has routes between the destinations
   for (let index = 0; index < destinations.length-1; index++) {
 
-    //finding in subdocument array of routes , returns an array of transports where conditions match in subdocument array of routes
-    let transport = await TransportModel.find
-    ( 
-      {"routes": 
-        {
-          $elemMatch: { 
-            'destination_from':destinations[index],  
-            'destination_to':destinations[nextDest]
-          } 
-        }
-      }
-    );
-      //if no such transport available with the route available
-    if (transport.length===0){
-      let to = await TripPlannerDestinationModel.findById(destinations[index])
-      let from = await TripPlannerDestinationModel.findById(destinations[nextDest])
-      const error = new HttpError(`could not find route between ${to.name} to ${from.name}`,404);
+    let chkroute = await RouteModel.find({'destination_from':destinations[index],'destination_to':destinations[nextDest]}).populate('destination_from destination_to')
+    if (chkroute.length===0){
+
+      let from = await TripPlannerDestinationModel.findById(destinations[index])
+      let to = await TripPlannerDestinationModel.findById(destinations[nextDest])
+      const error = new HttpError(`Could not Find Route between ${from.name} to ${to.name}`,404);
       return next(error);
     }
-    //if transport available
     else {
-      transports.push(transport)
-
-      let from = destinations[index]
-      let to = destinations[nextDest]
-
-      let nroutes=[] //creating local array to insert the routes information
-
-      //nested for each array to iterate routes array of each transport that has a matching route
-      transport.forEach(tr=>{
-        tr.routes.forEach(element => {
-          //checking where in routes array is the required route
-          if (element.destination_from==from && element.destination_to==to )
-          { 
-            //inserting route in the local array of routes
-            nroutes.push({'transport id':tr._id,'tranport name':tr.name,'destination_from':element.destination_from,'destination_to':element.destination_to,'fare':element.fare})
-          }
-        });
+      // console.log('route id',chkroute)
+      routes.push({
+        destination_from:chkroute[0].destination_from.name,
+        destination_to:chkroute[0].destination_to.name
       })
-      //pushing the created local array to tranport
-      routesDetails.push(nroutes)
-
-      //old logic to store transport fares
-      transport[0].routes.forEach(element => {
-        if (element.destination_from==from && element.destination_to==to )
-        {
-          routes.push(element)
-          fares.push(element.fare)
-        }
-      });
-     
-      //incrementing nextDest to move to next set of destinations
-      nextDest++
+      let transport = await TransportModel.find({'route':chkroute[0]._id}).sort('-fare');
+      if (transport.length===0){
+        let from = await TripPlannerDestinationModel.findById(destinations[index])
+      let to = await TripPlannerDestinationModel.findById(destinations[nextDest])
+      const error = new HttpError(`Could not Find Transport between ${from.name} to ${to.name}`,404);
+      return next(error);
+      }
+      else {
+        transports.push(transport)
+        minTransportFare+=transport[transport.length-1].fare
+        maxTransportFare+=transport[0].fare
+        nextDest++
+        minTransports.push(transport[transport.length-1])
+        maxTransports.push(transport[0])
+        Transports.push({
+          minTransportDetails:transport[transport.length-1],
+          maxTransportDetails:transport[0]
+        })
+      }
     }
   }
-
-  //sorting the created routes array by the fare to min->maxs
-  routesDetails.forEach(element=>{
-    element.sort((a,b)=> a.fare-b.fare)
-  })
-
-  //adding fares to minTransportFareFare and maxTransportFare
-  routesDetails.forEach(element=>{
-    minTransportFare+=element[0].fare
-    maxTransportFare+=element[element.length-1].fare
-  })
-
+    
   //interating destination array sent from client to find hotels in each destination
-  for (let index = 0; index < destinations.length; index++) {
+  for (let index = 1; index < destinations.length; index++) {
     //aggreagation framwork used to find maximum and minimum hotel rent from each destination
     const aggregate =  [
       { $match : { "destination": new mongoose.Types.ObjectId(destinations[index])} } ,
       {
-        $group: { _id: "$destination", HotelMin: { $min: "$budget_rent" },HotelMax:{ $max: "$luxury_rent" }}
+        $group: { _id: "$destination", HotelMin: { $min: "$budget_rent" },HotelMax:{ $max: "$luxury_rent"}}
       },  
     ]
 
@@ -112,16 +66,54 @@ const getTripPlanEstimate = async (req,res,next)=>{
     //adding minimum and maximum hotel rent from each destination to the variables
     minHotel +=  hotel[0].HotelMin
     maxHotel +=  hotel[0].HotelMax
+    HotelDetails.push({destination:destinations[index],minHotelRent:hotel[0].HotelMin,maxHotelRent:hotel[0].HotelMax})
   }
-  //old logic to calculate total fare by iterating the fares array and adding each value
-  fares.forEach(fare=> totalFare+=fare)
-  //old logic to calculate min and max estimates
-  minEstimate = minHotel+totalFare
-  maxEstimate = maxHotel+totalFare
-
-  //calculating the new min and max estimate
+    // HotelDetails.map(async element=>{
+      
+    //   console.log(minhotel)
+    //   console.log(maxhotel)
+    // })
+    for (let index = 0; index < HotelDetails.length; index++) {
+      minhotel = await HotelModel.findOne({'destination':HotelDetails[index].destination,'budget_rent':HotelDetails[index].minHotelRent})
+      maxhotel = await HotelModel.findOne({'destination':HotelDetails[index].destination,'luxury_rent':HotelDetails[index].maxHotelRent})
+      Hotels.push({
+        minHotel:minhotel,
+        maxHotel:maxhotel
+      })
+      minHotels.push(minhotel)
+      maxHotels.push(maxhotel)
+      
+    }
+   
   let newMinEstimate = minHotel+minTransportFare
   let newMaxEstimate = maxHotel+maxTransportFare
-  res.send({newMaxEstimate,newMinEstimate})
+
+  for (let index = 0; index < destinations.length-1; index++) {
+    var day = index+1
+    var luxury_day = {
+      day:day,
+      route:routes[index],
+      transport:{name:maxTransports[index].company_name,
+      fare:maxTransports[index].fare},
+      hotel:{name:maxHotels[index].title,
+      rent:maxHotels[index].luxury_rent},
+      total:maxTransports[index].fare+maxHotels[index].luxury_rent
+    }
+    var budget_day = {
+      day:day,
+      route:routes[index],
+      transport:{name:minTransports[index].company_name,
+        fare:minTransports[index].fare},
+      hotel:{name:minHotels[index].title,
+        rent:minHotels[index].budget_rent},
+      total:minTransports[index].fare+minHotels[index].budget_rent
+    }
+    luxury.push(luxury_day)
+    budget.push(budget_day)
+  }
+
+  res.send(
+    {minTransportFare,maxTransportFare,minHotel,maxHotel,newMaxEstimate,newMinEstimate,routes,luxury,budget}
+  )
 }
 module.exports.getTripPlanEstimate  = getTripPlanEstimate
