@@ -1,4 +1,4 @@
-const thankyouEmail = (name) => 
+const EmailConfirmation = (name,token) => 
 
 `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -9,6 +9,14 @@ const thankyouEmail = (name) =>
 <meta content="width=device-width" name="viewport"/>
 
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <title></title>
 
@@ -279,14 +287,17 @@ const thankyouEmail = (name) =>
 </tbody>
 </table>
 <div align="center" class="img-container center fixedwidth" style="padding-right: 0px;padding-left: 0px;">
-	<h1 style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:45px;font-weight:normal;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:0;margin-bottom: 50px;">Hello, ${name}!</h1>
-<img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="https://iili.io/Bb5KNe.png"style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 75%; max-width: 420px; display: block;" title="Welcome" width="420"/>
+	<h1 style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:45px;font-weight:normal;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:15px;">Hello, ${name}!</h1>
+  <a style="background-color:#114b5f;color:white;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;margin-bottom:30px!important;text-decoration:none;padding:10px;"  href='http://localhost:3000/email/${token}'>Click Here To Confirm Your Email</a>
+
+	<p style="margin: 0; font-size: 14px; text-align: center; line-height: 1.2; word-break: break-word; mso-line-height-alt: 19px; margin-top: 25px; margin-bottom: 0;"><span style="font-size: 16px; color: #ffffff;">This Email Link Will Expire in 1 hour!</span></p>	
+<img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="https://iili.io/Bb5KNe.png"style="text-decoration:none;height:auto;border:0;width:75%;max-width:420px;display:block;margin-top: 20px;"/>
 
 </div>
 
 <div style="color:#191919;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;line-height:1.5;padding-top:10px;padding-right:40px;padding-bottom:10px;padding-left:40px;">
 <div class="txtTinyMce-wrapper" style="line-height: 1.5; font-size: 12px; color: #191919; font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; mso-line-height-alt: 18px;">
-	<p style="margin: 0; font-size: 16px; text-align: center; line-height: 1.2; word-break: break-word; mso-line-height-alt: 19px; margin-top: 35px; margin-bottom: 0;"><span style="font-size: 16px; color: #ffffff;">We at Travelogic have received your feedback, and it means the most to us, so thank you and we strive to do better in the future.</span></p>
+	<p style="margin: 0; font-size: 16px; text-align: center; line-height: 1.2; word-break: break-word; mso-line-height-alt: 19px; margin-top: 35px; margin-bottom: 0;"><span style="font-size: 16px; color: #ffffff;">This Email Link Will Expire in 1 hour</span></p>
 </div>
 </div>
 
@@ -515,4 +526,4 @@ const thankyouEmail = (name) =>
 </body>
 </html>
 `
-module.exports.thankyouEmail= thankyouEmail
+module.exports.EmailConfirmation= EmailConfirmation

@@ -14,5 +14,6 @@ router.get('/admin/users', UserController.getAllUsersAdmin)
 router.delete('/:id', UserController.deleteUserById)
 router.post('/login', UserController.logIn)
 router.post('/login/google', UserController.logInWithGoogle)
+router.get('/email/:token', UserController.emailConfirmation)
 
 module.exports = router;

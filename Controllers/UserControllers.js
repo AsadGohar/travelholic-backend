@@ -9,6 +9,9 @@ const multer = require('multer')
 const sharp = require('sharp')
 const fs = require("fs")
 const Joi = require('joi');
+const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer');
+const {EmailConfirmation}= require('../public/EmailConfirmation')
 const {OAuth2Client} = require('google-auth-library')
 
 const client = new OAuth2Client(`${process.env.GOOGLE_CLIENT_ID}`)
@@ -85,30 +88,77 @@ const createUser = async (req, res, next) => {
     const err = new HttpError(error.details[0].message, 500);
     return next(err);
   }
-  let token;
-
+  
   let user = await UserModel.findOne({ email: email })
   if (user) {
     const error = new HttpError('User Already Registered', 500);
     return next(error);
   }
   else {
-    try {
-      user = UserModel()
-      user.name = name
-      user.email = email
-      user.password = password
-      user.mobile_num = mobile_num
-      user.display_image_name="default.jpg"
-      token = user.getToken()
-      await user.save()
+    let token = jwt.sign({name,email,password,mobile_num},process.env.JWT_EMAIL_CONFIRMATION_SECRET,{expiresIn:'1h'})
+    const output = EmailConfirmation(name,token)
+    var mail = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'fa17-bse-137@cuilahore.edu.pk',
+        pass: 'FA17BSE137'
+      },
+    tls: {
+      rejectUnauthorized: false
     }
-    catch (err) {
-      const error = new HttpError('Creating User Failed', 500);
-      return next(error);
+    });
+  
+    var mailOptions = {
+      from: 'Travelogic',
+      to: email,
+      subject: 'Email Confirmation',
+      text: 'Sent!',
+      html: output,
     }
-    res.send({ user, token })
+  
+    mail.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent With Attachment: ' + info.response);
+      }
+    });
+    res.send('Mail Sent')
   }
+}
+
+//EMAIL CONFIRMATION
+const emailConfirmation = async (req, res, next) => {
+  console.log('in confirm')
+    let token = req.params.token
+    if (token){
+      jwt.verify(token,process.env.JWT_EMAIL_CONFIRMATION_SECRET,async function (err,decoded) {
+        if (err){
+          res.send({verified:false})
+        }
+        else {
+          const {name,email,password,mobile_num} = decoded
+          try {
+            user = UserModel()
+            user.name = name
+            user.email = email
+            user.password = password
+            user.mobile_num = mobile_num
+            user.display_image_name="default.jpg"
+            await user.save()
+            res.send({verified:true})
+          }
+          catch (err) {
+            res.send({verified:false})
+          }
+        }
+        
+      })
+      
+    }
+    else {
+      res.send({verified:false})
+    }
 }
 
 //USER SIGN IN
@@ -327,15 +377,9 @@ const logInWithGoogle = async(req,res,next)=>{
   })
 }
 
-const loginWithFacebook = async(req,res,next)=>{
-
-}
-
-
 module.exports.createUser =createUser
 module.exports.logIn =logIn
 module.exports.logInWithGoogle =logInWithGoogle
-module.exports.loginWithFacebook =loginWithFacebook
 module.exports.getUserById =getUserById
 module.exports.updatePassword =updatePassword
 module.exports.updateUserById =updateUserById
@@ -343,3 +387,4 @@ module.exports.deleteUserById =deleteUserById
 module.exports.uploadProfilePic  =uploadProfilePic 
 module.exports.getAllUsersAdmin  =getAllUsersAdmin 
 module.exports.getReportedUsersAdmin = getReportedUsersAdmin
+module.exports.emailConfirmation= emailConfirmation
