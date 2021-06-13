@@ -43,8 +43,6 @@ app.use(cors({
         "http://localhost:3000",
         "http://localhost:3001",
         "https://travelogic.pk",
-        "https://travelholic-n.herokuapp.com"
-
     ],
     credentials: true,
 }));
@@ -66,6 +64,9 @@ app.use('/api/routes', RouteRoutes)
 
 // For admin
 app.use('/api/admin', AdminRoutes)
+
+//Default route
+app.use('/', (req, res) => res.send('Travelogic Server'))
 
 // PAYPAL API
 app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID))
