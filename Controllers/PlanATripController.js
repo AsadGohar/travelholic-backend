@@ -9,6 +9,8 @@ const HttpError = require('../Models/HttpError');
 const getTripPlanEstimate = async (req,res,next)=>{
   const {destinations} =req.body
   let nextDest = 1, minHotel = 0, maxHotel = 0, routes = [], fares = [], maxTransports = [], minTransports = [], minHotels = [], maxHotels = [], transports = [], totalFare = 0, minEstimate, maxEstimate, routesDetails = [], minTransportFare = 0, maxTransportFare = 0, hotels = [], HotelDetails = [], maxHotelDetails = [], minHotelDetails = [], Hotels = [], Transports = [], luxury = [], budget = []
+
+  for (let index = 0; index < destinations.length-1; index++) {
     if (destinations[index]==destinations[nextDest]){
 
       routes.push({
