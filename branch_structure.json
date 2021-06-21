@@ -1,0 +1,21 @@
+{
+  "default_branch": "master",
+  "branches": [
+    "aws-deploy",
+    "linux-production",
+    "master",
+    "origin"
+  ],
+  "parent": {
+    "aws-deploy": "master",
+    "linux-production": "master",
+    "master": null,
+    "origin": "master"
+  },
+  "order": [
+    "master",
+    "aws-deploy",
+    "linux-production",
+    "origin"
+  ]
+}
