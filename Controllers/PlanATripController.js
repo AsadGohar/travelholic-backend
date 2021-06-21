@@ -5,13 +5,10 @@ const mongoose = require("mongoose");
 const TransportModel = require('../Models/Transport');
 const HttpError = require('../Models/HttpError');
 
+
 const getTripPlanEstimate = async (req,res,next)=>{
   const {destinations} =req.body
- 
-  let nextDest=1,minHotel=0,maxHotel=0,routes=[],fares=[],maxTransports=[],minTransports=[],minHotels=[],maxHotels=[],totalFare=0,minEstimate,maxEstimate,routesDetails=[],minTransportFare=0,maxTransportFare=0,hotels=[],HotelDetails=[],maxHotelDetails=[],minHotelDetails=[],Hotels=[],Transports=[],luxury=[],budget=[]
-
-  for (let index = 0; index < destinations.length-1; index++) {
-
+  let nextDest = 1, minHotel = 0, maxHotel = 0, routes = [], fares = [], maxTransports = [], minTransports = [], minHotels = [], maxHotels = [], transports = [], totalFare = 0, minEstimate, maxEstimate, routesDetails = [], minTransportFare = 0, maxTransportFare = 0, hotels = [], HotelDetails = [], maxHotelDetails = [], minHotelDetails = [], Hotels = [], Transports = [], luxury = [], budget = []
     if (destinations[index]==destinations[nextDest]){
 
       routes.push({
@@ -78,18 +75,19 @@ const getTripPlanEstimate = async (req,res,next)=>{
           })
           nextDest++
         }
+
       }
     }
   }
-    
+
   //interating destination array sent from client to find hotels in each destination
   for (let index = 1; index < destinations.length; index++) {
     //aggreagation framwork used to find maximum and minimum hotel rent from each destination
-    const aggregate =  [
-      { $match : { "destination": new mongoose.Types.ObjectId(destinations[index])} } ,
+    const aggregate = [
+      { $match: { "destination": new mongoose.Types.ObjectId(destinations[index]) } },
       {
-        $group: { _id: "$destination", HotelMin: { $min: "$budget_rent" },HotelMax:{ $max: "$luxury_rent"}}
-      },  
+        $group: { _id: "$destination", HotelMin: { $min: "$budget_rent" }, HotelMax: { $max: "$luxury_rent" } }
+      },
     ]
 
     //returns an array of object containing minimum and maximum values
@@ -97,10 +95,11 @@ const getTripPlanEstimate = async (req,res,next)=>{
     // console.log(hotel)
 
     //adding minimum and maximum hotel rent from each destination to the variables
-    minHotel +=  hotel[0].HotelMin
-    maxHotel +=  hotel[0].HotelMax
-    HotelDetails.push({destination:destinations[index],minHotelRent:hotel[0].HotelMin,maxHotelRent:hotel[0].HotelMax})
+    minHotel += hotel[0].HotelMin
+    maxHotel += hotel[0].HotelMax
+    HotelDetails.push({ destination: destinations[index], minHotelRent: hotel[0].HotelMin, maxHotelRent: hotel[0].HotelMax })
   }
+
 
     for (let index = 0; index < HotelDetails.length; index++) {
       minhotel = await HotelModel.findOne({'destination':HotelDetails[index].destination,'budget_rent':HotelDetails[index].minHotelRent})
@@ -117,8 +116,9 @@ const getTripPlanEstimate = async (req,res,next)=>{
   let newMinEstimate = minHotel+minTransportFare
   let newMaxEstimate = maxHotel+maxTransportFare
 
-  for (let index = 0; index < destinations.length-1; index++) {
-    var day = index+1
+
+  for (let index = 0; index < destinations.length - 1; index++) {
+    var day = index + 1
     var luxury_day = {
       day:day,
       route:routes[index],
@@ -150,7 +150,7 @@ const getTripPlanEstimate = async (req,res,next)=>{
   }
 
   res.send(
-    {minTransportFare,maxTransportFare,minHotel,maxHotel,newMaxEstimate,newMinEstimate,routes,luxury,budget}
+    { minTransportFare, maxTransportFare, minHotel, maxHotel, newMaxEstimate, newMinEstimate, routes, luxury, budget }
   )
 }
-module.exports.getTripPlanEstimate  = getTripPlanEstimate
+module.exports.getTripPlanEstimate = getTripPlanEstimate
