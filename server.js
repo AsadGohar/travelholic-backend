@@ -25,6 +25,7 @@ const TripPlannerDestinationRoutes = require('./Routes/TripPlannerDestinationRou
 const PlanATripRoutes = require('./Routes/PlanATripRoutes')
 const FeedbackRoutes = require('./Routes/FeedbackRoutes')
 const RouteRoutes = require('./Routes/RouteRoutes');
+const SearchRoutes = require('./Routes/SearchRoutes');
 
 
 const app = express();
@@ -61,6 +62,7 @@ app.use('/api/plan', PlanATripRoutes)
 app.use('/api/feedbacks', FeedbackRoutes)
 app.use('/api/tripplannerdestination', TripPlannerDestinationRoutes)
 app.use('/api/routes', RouteRoutes)
+app.use('/api/search', SearchRoutes)
 
 // For admin
 app.use('/api/admin', AdminRoutes)
