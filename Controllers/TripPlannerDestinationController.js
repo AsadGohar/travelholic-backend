@@ -58,16 +58,12 @@ const getTripPlannerDestionationById = async (req,res,next)=>{
 const getTripPlannerDestinationByCoordinates = async (req,res,next)=>{
   
   const {to,from} = req.body
-  console.log(to,from)
   try {
     if (to>from){
-      // console.log('to>from')
-      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(from).lt(to).select('name').exec();
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gte(from).lt(to).select('name').exec();
     }
     else {
-      // console.log('to<from')
-
-      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(to).lt(from).select('name').exec();
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(to).lte(from).select('name').exec();
     }
   } catch (error) {
     const err = new HttpError('Getting Trip Planner Destination Faile, please try again',500);
