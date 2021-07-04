@@ -25,11 +25,17 @@ router.delete('/:id', BookingControllers.deleteBooking);
 // Confirm Booking
 router.put('/:id/confirm', BookingControllers.confirmBooking)
 
+// Cancel Booking
+router.put('/:id/cancel', BookingControllers.cancelBooking)
+
 // Update Order to Paid
 router.put('/:id/pay', auth, BookingControllers.updateBookingToPaid)
 
 // Update Payment Method
 router.put('/:id/paymentMethod', auth, BookingControllers.updatePaymentMethod)
+
+// Get booking by user ID
+router.get('/user/:id', BookingControllers.getBookingsByUserId)
 
 
 module.exports = router;

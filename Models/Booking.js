@@ -60,9 +60,9 @@ const BookingSchema = mongoose.Schema({
       update_time: { type: String },
       email_address: { type: String },
   },
-   booking_confirmed: {
-      type: Boolean,
-      default: false
+   booking_status: {
+      type: String,
+      default: 'pending'
    },
 }, { timestamps: true });
 

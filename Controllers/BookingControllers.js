@@ -106,10 +106,33 @@ const confirmBooking = async (req, res, next) => {
     }
 
     try {
-        booking.booking_confirmed = true
+        booking.booking_status= 'confirmed'
 
     } catch (err) {
         const error = new HttpError('Unknown error occured while deleting booking, please try again.', 500);
+        return next(error);
+    }
+    const updatedBooking = await booking.save()
+
+    res.json(updatedBooking);
+}
+
+// CANCEL Booking
+const cancelBooking = async (req, res, next) => {
+    const bookingId = req.params.id;
+    let booking;
+    try {
+        booking = await Booking.findById(bookingId);
+    } catch (err) {
+        const error = new HttpError('Unknown error occured while cancelling booking, please try again.', 500);
+        return next(error);
+    }
+
+    try {
+        booking.booking_status= 'cancelled'
+
+    } catch (err) {
+        const error = new HttpError('Unknown error occured while cancelling booking, please try again.', 500);
         return next(error);
     }
     const updatedBooking = await booking.save()
@@ -172,6 +195,24 @@ const updatePaymentMethod = async (req, res, next) => {
     res.json(updatedBooking);
 }
 
+// Get booking by User ID
+const getBookingsByUserId = async (req, res, next) => {
+    let id = req.params.id
+    let bookings
+    try {
+        bookings = await Booking.find({user:id})
+    } catch (err) {
+        const error = new HttpError('Unknown error occured while fingind required bookings, please try again.', 500);
+        return next(error);
+    }
+    if (bookings.length===0){
+        const err = new HttpError('No Bookings Found',500);
+        return next(err)
+      }
+      else{
+        res.send(bookings)
+      }
+}
 
 
 // EXPORTING ALL CONTROllERS HERE
@@ -180,6 +221,7 @@ exports.getBookings = getBookings;
 exports.deleteBooking = deleteBooking;
 exports.getBookingById = getBookingById;
 exports.confirmBooking = confirmBooking;
+exports.cancelBooking = cancelBooking;
 exports.updateBookingToPaid = updateBookingToPaid;
 exports.updatePaymentMethod = updatePaymentMethod;
-
+exports.getBookingsByUserId = getBookingsByUserId;
