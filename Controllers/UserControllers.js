@@ -95,30 +95,26 @@ const createUser = async (req, res, next) => {
     return next(error);
   }
   else {
-    let token = jwt.sign({name,email,password,mobile_num},process.env.JWT_EMAIL_CONFIRMATION_SECRET,{expiresIn:'1h'})
+    let token = jwt.sign({name,email,mobile_num},process.env.JWT_EMAIL_CONFIRMATION_SECRET,{expiresIn:'1d'})
     const output = EmailConfirmation(name,token)
-
-
-    // var mail = nodemailer.createTransport({
-    //   service: 'gmail',
-    //   auth: {
-    //     user: 'fa17-bse-137@cuilahore.edu.pk',
-    //     pass: 'FA17BSE137'
-    //   },
-      // tls: {
-      //   rejectUnauthorized: false
-      // }
-    // });
-  
-    var mailOptions = {
-      from: 'info@travelogic.pk',
-      to: email,
-      subject: 'Email Confirmation',
-      text: 'Sent!',
-      html: output,
-    }
   
     try {
+
+      const new_user = UserModel()
+      new_user.name = name
+      new_user.email = email
+      new_user.password = password
+      new_user.mobile_num = mobile_num
+      new_user.display_image_name="default.jpg"
+      await new_user.save()
+
+      var mailOptions = {
+        from: 'info@travelogic.pk',
+        to: email,
+        subject: 'Email Confirmation',
+        text: 'Sent!',
+        html: output,
+      }
       
       let mail = nodemailer.createTransport({
         host: "travelogic.pk",
@@ -129,8 +125,8 @@ const createUser = async (req, res, next) => {
           pass: "Travelogic@2021", // generated ethereal password
         },
         tls: {
-            rejectUnauthorized: false
-          }
+          rejectUnauthorized: false
+        }
       });
 
       mail.verify(function(error, success) {
@@ -163,30 +159,28 @@ const createUser = async (req, res, next) => {
 //EMAIL CONFIRMATION
 const emailConfirmation = async (req, res, next) => {
   console.log('in confirm')
-    let token = req.params.token
-    if (token){
-      jwt.verify(token,process.env.JWT_EMAIL_CONFIRMATION_SECRET,async function (err,decoded) {
-        if (err){
+  let token = req.params.token
+  if (token){
+    jwt.verify(token,process.env.JWT_EMAIL_CONFIRMATION_SECRET,async function (err,decoded) {
+      if (err){
+        res.send({verified:false})
+      }
+      else {
+        const {name,email,mobile_num} = decoded
+        try {
+          
+          let user = await UserModel.findOneAndUpdate({ email: email },{isVerified:true},{
+            returnOriginal: false
+          })
+          console.log(user)
+          res.send({verified:true})
+        }
+        catch (err) {
           res.send({verified:false})
         }
-        else {
-          const {name,email,password,mobile_num} = decoded
-          try {
-            user = UserModel()
-            user.name = name
-            user.email = email
-            user.password = password
-            user.mobile_num = mobile_num
-            user.display_image_name="default.jpg"
-            await user.save()
-            res.send({verified:true})
-          }
-          catch (err) {
-            res.send({verified:false})
-          }
-        }
-        
-      })
+      }
+      
+    })
       
     }
     else {
@@ -202,6 +196,7 @@ const logIn = async (req, res, next) => {
   let isMatch
 
   let user = await UserModel.findOne({ email: email }).select('+password')
+  console.log(user)
   if (!user) {
     const error = new HttpError('You Are Not Registered', 500);
     return next(error);
@@ -216,15 +211,44 @@ const logIn = async (req, res, next) => {
     const error = new HttpError('Incorrect Password or Username', 500);
     return next(error);
   }
+  else if (user.isVerified===false) {
 
-  token = user.getToken()
-  // res.send(token)
-  res.json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    token: token
-  })
+    let create_date = new Date(`${user.createdAt}`)
+    let today = new Date()
+    
+    var diff =( today.getTime() - create_date.getTime()) / 1000;
+    diff /= (60 * 60);
+    var diff_in_hrs = Math.abs(Math.round(diff));
+    if (diff_in_hrs>24)
+    {
+      let delete_user = await UserModel.findOneAndDelete({ email: email })
+      console.log(delete_user)
+      const error = new HttpError('Your verification email has expired please register again to Continue', 500);
+      return next(error);
+    }
+    else {
+      token = user.getToken()
+      // res.send(token)
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token: token
+      })
+    }
+    
+  }
+  else {
+    token = user.getToken()
+    // res.send(token)
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: token
+    })
+  }
+  
 }
 
 //GETTING USER BY ID

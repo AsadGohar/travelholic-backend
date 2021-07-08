@@ -290,7 +290,7 @@ const EmailConfirmation = (name,token) =>
 	<h1 style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:45px;font-weight:normal;letter-spacing:normal;line-height:120%;text-align:center;margin-top:0;margin-bottom:15px;">Hello, ${name}!</h1>
   <a style="background-color:#114b5f;color:white;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;margin-bottom:30px!important;text-decoration:none;padding:10px;"  href='https://www.travelogic.pk/email/${token}'>Click Here To Confirm Your Email</a>
 
-	<p style="margin: 0; font-size: 14px; text-align: center; line-height: 1.2; word-break: break-word; mso-line-height-alt: 19px; margin-top: 25px; margin-bottom: 0;"><span style="font-size: 16px; color: #ffffff;">This Email Link Will Expire in 1 hour!</span></p>	
+	<p style="margin: 0; font-size: 14px; text-align: center; line-height: 1.2; word-break: break-word; mso-line-height-alt: 19px; margin-top: 25px; margin-bottom: 0;"><span style="font-size: 16px; color: #ffffff;">This Email Link Will Expire in 1 Day!</span></p>	
 <img align="center" alt="I'm an image" border="0" class="center fixedwidth" src="https://iili.io/Bb5KNe.png"style="text-decoration:none;height:auto;border:0;width:75%;max-width:420px;display:block;margin-top: 20px;"/>
 
 </div>

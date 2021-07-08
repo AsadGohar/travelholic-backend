@@ -10,6 +10,7 @@ const UserSchema = mongoose.Schema({
     street_address: {type: String},
     password: { type: String , required:true,select:false},
     dob : {type:Date},
+    isVerified: { type: Boolean, default: false },
     gender: { type: String },
     city: {type: String},
     reported: {type:Boolean,default:false},
