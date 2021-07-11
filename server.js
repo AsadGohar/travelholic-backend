@@ -70,9 +70,6 @@ app.use('/api/admin', AdminRoutes)
 //Default route
 app.use('/', (req, res) => res.send('Travelogic Server'))
 
-// PAYPAL API
-app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID))
-
 // Static Folder fo images upload
 // app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 app.use('/uploads/images', express.static(path.join('uploads', 'images')))
@@ -83,7 +80,6 @@ const csrfProtection = csurf({
     cookie: true
 })
 app.use(csrfProtection)
-
 
 
 //Error handling on server side

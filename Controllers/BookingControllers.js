@@ -142,6 +142,8 @@ const cancelBooking = async (req, res, next) => {
 
 // UPDATE BOOKING TO PAID
 const updateBookingToPaid = async (req, res, next) => {
+    const {created, email, id } = req.body
+    console.log(email)
     const bookingId = req.params.id;
     let booking;
     try {
@@ -154,12 +156,12 @@ const updateBookingToPaid = async (req, res, next) => {
     try {
         booking.isPaid = true
         booking.paidAt = Date.now()
-        booking.paymentResult = {
-            id: req.body.id,
-            status: req.body.status,
-            update_time: req.body.update_time,
-            email_address: req.body.payer.email_address,
-          }
+        // booking.paymentResult = {
+        //     id: req.body.id,
+        //     status: req.body.status,
+        //     update_time: req.body.created,
+        //     email_address: req.body.payer.email,
+        //   }
 
 
     } catch (err) {

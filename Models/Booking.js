@@ -54,12 +54,12 @@ const BookingSchema = mongoose.Schema({
    paidAt: {
       type: Date,
    },
-   paymentResult: {
-      id: { type: String },
-      status: { type: String },
-      update_time: { type: String },
-      email_address: { type: String },
-  },
+//    paymentResult: {
+//       id: { type: String },
+//       status: { type: String },
+//       update_time: { type: String },
+//       email_address: { type: String },
+//   },
    booking_status: {
       type: String,
       default: 'pending'
