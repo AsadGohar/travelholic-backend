@@ -76,6 +76,43 @@ const getTripPlannerDestinationByCoordinates = async (req,res,next)=>{
   res.send(destinations)
 }
 
+
+const getTripPlannerDestinationById = async (req,res,next)=> {
+
+  const {to,from} = req.body
+  let to_destination
+  let from_destination
+  try {
+
+     to_destination = await TripPlannerDestinationModel.findById(to)
+     from_destination = await TripPlannerDestinationModel.findById(from)
+
+    // console.log("to",parseFloat(to_destination.north_coordinate.toString()),"from",parseFloat(from_destination.north_coordinate.toString()))
+    
+    if (parseFloat(to_destination.north_coordinate.toString())>parseFloat(from_destination.north_coordinate.toString()))
+    {
+      destinations = await TripPlannerDestinationModel.where('north_coordinate')
+      .gt(parseFloat(from_destination.north_coordinate.toString()))
+      .lte(parseFloat(to_destination.north_coordinate.toString()))
+      .select('name').exec();
+    }
+    else {
+      destinations = await TripPlannerDestinationModel.where('north_coordinate')
+      .gte(parseFloat(from_destination.north_coordinate.toString()))
+      .lt(parseFloat(from_destination.north_coordinate.toString()))
+      .select('name').exec();
+    }
+  } catch (error) {
+    const err = new HttpError('Getting Trip Planner Destination Failed, please try again',500);
+    return next(err);
+  }
+  if (!destinations) {
+    const error = new HttpError('Could not find any Trip Planner Destination',404);
+    return next(error);
+  }
+  res.send(destinations)
+}
+
 const deleteTripPlannerDestinationById = async (req,res,next)=>{
   let destinations
   let id = req.params.id
@@ -97,5 +134,6 @@ module.exports.createTripPlannerDestination = createTripPlannerDestination
 module.exports.getAllTripPlannerDestinations  = getAllTripPlannerDestinations
 module.exports.getTripPlannerDestionationById  = getTripPlannerDestionationById
 module.exports.deleteTripPlannerDestinationById  = deleteTripPlannerDestinationById
-module.exports.getTripPlannerDestinationByCoordinates  = getTripPlannerDestinationByCoordinates
+module.exports.getTripPlannerDestinationByCoordinates = getTripPlannerDestinationByCoordinates
+module.exports.getTripPlannerDestinationById  = getTripPlannerDestinationById
 

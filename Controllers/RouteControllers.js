@@ -5,17 +5,22 @@ const HttpError = require('../Models/HttpError');
 const createRoute = async(req,res,next)=>{
 
   const {to,from} = req.body
-  let newRoute
-  let route = await RouteModel.find({destination_to:to,destination_from:from})
+  let firstRoute,secondRoute
+  let first_way_route = await RouteModel.find({destination_to:to,destination_from:from})
+  let second_way_route = await RouteModel.find({destination_to:from,destination_from:to})
 
-  if (route.length===0) {
+  if (first_way_route.length===0) {
 
     try {
-      newRoute = RouteModel()
-      newRoute.destination_to=to;
-      newRoute.destination_from=from;
-      newRoute.save()
-      
+      firstRoute = RouteModel()
+      firstRoute.destination_to=to;
+      firstRoute.destination_from=from;
+      firstRoute.save()
+
+      secondRoute = RouteModel()
+      secondRoute.destination_to=from;
+      secondRoute.destination_from=to;
+      secondRoute.save()
     } catch (err) {
       const error = new HttpError('Creating Route failed',500);
       return next(error);
@@ -27,7 +32,7 @@ const createRoute = async(req,res,next)=>{
     return next(error);
   }
   
-  res.send(newRoute)
+  res.send({firstRoute,secondRoute})
 }
 //Does route exists
 const doesRouteExist = async(req,res,next)=>{
