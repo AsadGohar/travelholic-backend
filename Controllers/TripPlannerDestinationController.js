@@ -27,7 +27,7 @@ const createTripPlannerDestination = async (req,res,next)=>{
 const getAllTripPlannerDestinations = async (req,res,next)=>{
   let destinations
   try {
-     destinations = await TripPlannerDestinationModel.find()
+     destinations = await TripPlannerDestinationModel.find().sort('name')
   } catch (error) {
     const err = new HttpError('Getting Trip Planner Destinations Failed, please try again',500);
     return next(err);
@@ -60,10 +60,10 @@ const getTripPlannerDestinationByCoordinates = async (req,res,next)=>{
   const {to,from} = req.body
   try {
     if (to>from){
-      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(from).lte(to).select('name').exec();
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(from).lte(to).select('name').sort('name').exec();
     }
     else {
-      destinations = await TripPlannerDestinationModel.where('north_coordinate').gte(to).lt(from).select('name').exec();
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gte(to).lt(from).select('name').sort('name').exec();
     }
   } catch (error) {
     const err = new HttpError('Getting Trip Planner Destination Faile, please try again',500);
@@ -94,13 +94,13 @@ const getTripPlannerDestinationById = async (req,res,next)=> {
       destinations = await TripPlannerDestinationModel.where('north_coordinate')
       .gt(parseFloat(from_destination.north_coordinate.toString()))
       .lte(parseFloat(to_destination.north_coordinate.toString()))
-      .select('name').exec();
+      .select('name').sort('name').exec();
     }
     else {
       destinations = await TripPlannerDestinationModel.where('north_coordinate')
       .gte(parseFloat(from_destination.north_coordinate.toString()))
       .lt(parseFloat(from_destination.north_coordinate.toString()))
-      .select('name').exec();
+      .select('name').sort('name').exec();
     }
   } catch (error) {
     const err = new HttpError('Getting Trip Planner Destination Failed, please try again',500);
