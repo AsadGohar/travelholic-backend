@@ -83,7 +83,14 @@ const getTripPlanEstimate = async (req,res,next)=>{
 
   //interating destination array sent from client to find hotels in each destination
   for (let index = 1; index < destinations.length; index++) {
-    //aggreagation framwork used to find maximum and minimum hotel rent from each destination
+    //aggregation framwork used to find maximum and minimum hotel rent from each destination
+    const hotel_data = await HotelModel.find({"destination":destinations[index]}) 
+    let dest = await TripPlannerDestinationModel.findById(destinations[index])
+    if (hotel_data.length===0){
+      const error = new HttpError(`Could not Find Hotel At ${dest.name}`,404);
+          return next(error);
+    }
+
     const aggregate = [
       { $match: { "destination": new mongoose.Types.ObjectId(destinations[index]) } },
       {
@@ -93,7 +100,7 @@ const getTripPlanEstimate = async (req,res,next)=>{
 
     //returns an array of object containing minimum and maximum values
     const hotel = await HotelModel.aggregate(aggregate).exec()
-    // console.log(hotel)
+    console.log(hotel)
 
     //adding minimum and maximum hotel rent from each destination to the variables
     minHotel += hotel[0].HotelMin
