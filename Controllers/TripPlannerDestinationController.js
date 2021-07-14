@@ -60,10 +60,11 @@ const getTripPlannerDestinationByCoordinates = async (req,res,next)=>{
   const {to,from} = req.body
   try {
     if (to>from){
-      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(from).lte(to).select('name').sort('name').exec();
+      // console.log('parseint',Math.ceil(to))
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gt(from).lte(Math.ceil(to)).select('name').sort('name').exec();
     }
     else {
-      destinations = await TripPlannerDestinationModel.where('north_coordinate').gte(to).lt(from).select('name').sort('name').exec();
+      destinations = await TripPlannerDestinationModel.where('north_coordinate').gte(Math.ceil(to)).lt(from).select('name').sort('name').exec();
     }
   } catch (error) {
     const err = new HttpError('Getting Trip Planner Destination Faile, please try again',500);
