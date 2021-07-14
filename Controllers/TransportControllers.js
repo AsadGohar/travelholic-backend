@@ -1,4 +1,5 @@
 const TransportModel = require('../Models/Transport');
+const RouteModel = require('../Models/Route');
 const HttpError = require('../Models/HttpError');
 const { validationResult } = require('express-validator');
 
@@ -16,7 +17,24 @@ const createTransport = async (req, res, next) => {
     createdTransport.company_name=company_name;
     createdTransport.fare=fare;
     createdTransport.route=route
+
+
+    let second_route = await RouteModel.findById(route)
+
+    // console.log('r',route)
+
+    let n_route = await RouteModel.findOne({destination_to:second_route.destination_from,destination_from:second_route.destination_to})
+
+    // console.log('nr',n_route)
+
+    const newT = TransportModel()
+    newT.company_name=company_name;
+    newT.fare=fare;
+    newT.route=n_route._id
+    
+    
     try {
+        await newT.save()
         await createdTransport.save();
     } catch (err) {
         const error = new HttpError('Creating Transport faile, please try again.',500);
@@ -124,3 +142,4 @@ exports.getTransports = getTransports;
 exports.getTransportById = getTransportById;
 exports.updateTransport = updateTransport;
 exports.deleteTransportById =deleteTransportById;
+
